@@ -5,6 +5,8 @@ package com.library.masterdaemon;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.library.datamodel.Constants.NamedConstants;
+import com.library.httpconnmanager.HttpClientPool;
 import com.library.httpcontrollers.HttpMainController;
 import com.library.jettyhttpserver.CustomJettyServer;
 import com.library.scheduler.CustomJobScheduler;
@@ -12,6 +14,7 @@ import com.library.masterdaemon.utilities.BindXmlAndPojo;
 import com.library.scheduler.JobsData;
 import com.library.sgsharedinterface.SharedAppConfigIF;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -39,6 +42,7 @@ public class MasterDaemon implements Daemon, ServletContextListener {
     private DaemonContext daemonContext;
     private CustomJettyServer jettyServer;
     private CustomJobScheduler jobScheduler;
+    private HttpClientPool httpClientPool;
     //private SharedAppConfigIF sharedAppConfigs;
 
     //Daemon methods
@@ -136,20 +140,35 @@ public class MasterDaemon implements Daemon, ServletContextListener {
         return commandLineArgs;
     }
 
-    void addHttpControllers(){
-        
-        
+    void addHttpControllers() {
+
     }
 
-    private JobsData createJobsData(SharedAppConfigIF sharedAppConfigsIF){
-        
-        JobsData jobsData =new JobsData();
-        jobsData.setCentralServerJsonUrl(sharedAppConfigsIF.getCentralServerJsonUrl());
-        
-        return jobsData;
+    /**
+     * Initialise the http connection manager
+     *
+     * @param sharedConfigs
+     * @param apiContentType The kind of requests whether Json or Xml that we
+     * will be sending/recieving
+     * @return
+     */
+    protected HttpClientPool initialiseHttpClientPool(SharedAppConfigIF sharedConfigs, String apiContentType) {
+
+        if (httpClientPool == null) {
+
+            int readTimeout = sharedConfigs.getReadTimeout();
+            int connTimeout = sharedConfigs.getConnTimeout();
+            int connPerRoute = sharedConfigs.getConnPerRoute();
+            int maxConnections = sharedConfigs.getMaxConnections();
+
+            httpClientPool = new HttpClientPool(readTimeout, connTimeout, connPerRoute, maxConnections, apiContentType);
+
+        }
+
+        return httpClientPool;
     }
 
-    protected CustomJettyServer attachJettyServer(String projectsDir, SharedAppConfigIF sharedAppConfigsIF, Logger LOGGER) throws FileNotFoundException {
+    protected CustomJettyServer attachJettyServer(SharedAppConfigIF sharedAppConfigsIF, Logger LOGGER) throws FileNotFoundException {
 
         String contextPath = sharedAppConfigsIF.getContextpath();
         String webAppWarFile = sharedAppConfigsIF.getWebappwarfile();
@@ -164,7 +183,7 @@ public class MasterDaemon implements Daemon, ServletContextListener {
         String KEYSTORE_MGR_PASS = sharedAppConfigsIF.getKeystoremanagerpass();
         String[] WELCOME_FILES = (sharedAppConfigsIF.getWelcomefiles().trim()).split("\\s*,\\s*");
 
-        String resourceBase = projectsDir + sharedAppConfigsIF.getRelativeresourcedir();
+        String resourceBase = sharedAppConfigsIF.getResourceDirAbsPath();
         String webDescriptor = resourceBase + sharedAppConfigsIF.getWebxmlfile();
         //our localServer for accepting external requests
         jettyServer = new CustomJettyServer(webDescriptor, resourceBase, contextPath, webAppWarFile, HTTP_PORT, LOGGER);
@@ -198,15 +217,28 @@ public class MasterDaemon implements Daemon, ServletContextListener {
         return (jettyServer.stopServer());
     }
 
-    protected void scheduleARepeatJob(SharedAppConfigIF sharedAppConfigs, Class<? extends Job> jobClass, JobListener jobListener) {
+    protected void scheduleARepeatJob(SharedAppConfigIF sharedAppConfigs, Class<? extends Job> jobClass, JobListener jobListener, HttpClientPool httpClientPool) {
 
-        JobsData jobsData = createJobsData(sharedAppConfigs);
+        JobsData jobsData = new JobsData();
+
+        String apiContentType = httpClientPool.getApiContentType();
+        String remoteUrl;
+
+        if (NamedConstants.HTTP_CONTENT_TYPE_JSON.equalsIgnoreCase(apiContentType)) {
+            remoteUrl = sharedAppConfigs.getCentralServerJsonUrl();
+        } else {
+            //Xml
+            remoteUrl = sharedAppConfigs.getCentralServerXmlUrl();
+        }
         
+        jobsData.setRemoteUrl(remoteUrl); //we will need to write proper logic to test if this is a Json or Xml request
+        jobsData.setHttpClientPool(httpClientPool);
+
         String triggerName = sharedAppConfigs.getAdFetcherTriggerName();
         String jobName = sharedAppConfigs.getAdFetcherJobName();
         String groupName = sharedAppConfigs.getAdFetcherGroupName();
         int repeatInterval = sharedAppConfigs.getAdFetcherInterval();
-        
+
         //Class<? extends Job> jobClass
         jobScheduler.scheduleARepeatJob(triggerName, jobName, groupName, repeatInterval, jobsData, jobClass, jobListener);
 

@@ -76,6 +76,14 @@
             <version>9.2.3.v20140905</version>
             <type>jar</type>
         </dependency>-->
+        
+        <dependency>
+            <groupId>com.sghttpconnectionmanager</groupId>
+            <artifactId>sghttpconnectionmanager</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
+        
         <dependency>
             <groupId>com.sgsharedinterfce</groupId>
             <artifactId>sgsharedinterface</artifactId>
@@ -115,41 +123,44 @@
    
     
     
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-webapp</artifactId>
-            <version>9.2.14.v20151106</version>
-            <type>jar</type>
-        </dependency>
-        
+    
+        <!-- http://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server -->
+
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>9.2.14.v20151106</version>
-            <type>jar</type>
+            <version>9.3.7.v20160115</version>
         </dependency>
         
+        <!-- http://mvnrepository.com/artifact/org.eclipse.jetty/jetty-webapp -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <version>9.2.14.v20151106</version>
-            <type>jar</type>
+            <artifactId>jetty-webapp</artifactId>
+            <version>9.3.7.v20160115</version>
         </dependency>
-        
+
+        <!-- http://mvnrepository.com/artifact/org.eclipse.jetty/jetty-plus -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-plus</artifactId>
-            <version>9.2.7.v20150116</version>
+            <version>9.3.7.v20160115</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>9.3.7.v20160115</version>
             <type>jar</type>
         </dependency>
-        
+    
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-jndi</artifactId>
-            <version>9.2.7.v20150116</version>
+            <version>9.3.7.v20160115</version>
             <type>jar</type>
         </dependency>
-        
+
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
