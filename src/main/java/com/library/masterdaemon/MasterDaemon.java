@@ -5,18 +5,16 @@ package com.library.masterdaemon;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.library.datamodel.Constants.APIContentType;
 import com.library.datamodel.Constants.NamedConstants;
 import com.library.httpconnmanager.HttpClientPool;
-import com.library.httpcontrollers.HttpMainController;
 import com.library.jettyhttpserver.CustomJettyServer;
 import com.library.scheduler.CustomJobScheduler;
-import com.library.masterdaemon.utilities.BindXmlAndPojo;
+import com.library.utilities.BindXmlAndPojo;
 import com.library.scheduler.JobsData;
 import com.library.sgsharedinterface.SharedAppConfigIF;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.xml.bind.JAXBException;
@@ -152,7 +150,7 @@ public class MasterDaemon implements Daemon, ServletContextListener {
      * will be sending/recieving
      * @return
      */
-    protected HttpClientPool initialiseHttpClientPool(SharedAppConfigIF sharedConfigs, String apiContentType) {
+    protected HttpClientPool initialiseHttpClientPool(SharedAppConfigIF sharedConfigs, APIContentType apiContentType) {
 
         if (httpClientPool == null) {
 
@@ -221,26 +219,10 @@ public class MasterDaemon implements Daemon, ServletContextListener {
 
         JobsData jobsData = new JobsData();
 
-        String apiContentType = httpClientPool.getApiContentType();
-        String remoteUrl;
-
-        if (NamedConstants.HTTP_CONTENT_TYPE_JSON.equalsIgnoreCase(apiContentType)) {
-            remoteUrl = sharedAppConfigs.getCentralServerJsonUrl();
-        } else {
-            //Xml
-            remoteUrl = sharedAppConfigs.getCentralServerXmlUrl();
-        }
-        
-        jobsData.setRemoteUrl(remoteUrl); //we will need to write proper logic to test if this is a Json or Xml request
+        jobsData.setAppConfigs(sharedAppConfigs);
         jobsData.setHttpClientPool(httpClientPool);
 
-        String triggerName = sharedAppConfigs.getAdFetcherTriggerName();
-        String jobName = sharedAppConfigs.getAdFetcherJobName();
-        String groupName = sharedAppConfigs.getAdFetcherGroupName();
-        int repeatInterval = sharedAppConfigs.getAdFetcherInterval();
-
-        //Class<? extends Job> jobClass
-        jobScheduler.scheduleARepeatJob(triggerName, jobName, groupName, repeatInterval, jobsData, jobClass, jobListener);
+        jobScheduler.scheduleARepeatJob(jobsData, jobClass, jobListener);
 
     }
 
