@@ -6,12 +6,11 @@ package com.library.masterdaemon;
  * and open the template in the editor.
  */
 import com.library.datamodel.Constants.APIContentType;
-import com.library.datamodel.Constants.NamedConstants;
 import com.library.httpconnmanager.HttpClientPool;
 import com.library.jettyhttpserver.CustomJettyServer;
 import com.library.scheduler.CustomJobScheduler;
 import com.library.utilities.BindXmlAndPojo;
-import com.library.scheduler.JobsData;
+import com.library.configs.JobsConfig;
 import com.library.sgsharedinterface.SharedAppConfigIF;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
@@ -139,119 +138,6 @@ public class MasterDaemon implements Daemon, ServletContextListener {
     }
 
     void addHttpControllers() {
-
-    }
-
-    /**
-     * Initialise the http connection manager
-     *
-     * @param sharedConfigs
-     * @param apiContentType The kind of requests whether Json or Xml that we
-     * will be sending/recieving
-     * @return
-     */
-    protected HttpClientPool initialiseHttpClientPool(SharedAppConfigIF sharedConfigs, APIContentType apiContentType) {
-
-        if (httpClientPool == null) {
-
-            int readTimeout = sharedConfigs.getReadTimeout();
-            int connTimeout = sharedConfigs.getConnTimeout();
-            int connPerRoute = sharedConfigs.getConnPerRoute();
-            int maxConnections = sharedConfigs.getMaxConnections();
-
-            httpClientPool = new HttpClientPool(readTimeout, connTimeout, connPerRoute, maxConnections, apiContentType);
-
-        }
-
-        return httpClientPool;
-    }
-
-    protected CustomJettyServer attachJettyServer(SharedAppConfigIF sharedAppConfigsIF, Logger LOGGER) throws FileNotFoundException {
-
-        String contextPath = sharedAppConfigsIF.getContextpath();
-        String webAppWarFile = sharedAppConfigsIF.getWebappwarfile();
-        int HTTP_PORT = sharedAppConfigsIF.getHttpport();
-        int HTTPS_PORT = sharedAppConfigsIF.getHttpsport();
-        int ADMIN_PORT = sharedAppConfigsIF.getAdminport();
-        int OUTPUT_BUFFER_SIZE = sharedAppConfigsIF.getOutputbuffersize();
-        int REQUEST_HEADER_SIZE = sharedAppConfigsIF.getRequestheadersize();
-        int RESPONSE_HEADER_SIZE = sharedAppConfigsIF.getResponseheadersize();
-        String KEYSTORE_PATH = sharedAppConfigsIF.getKeystorepass();
-        String KEYSTORE_PASS = sharedAppConfigsIF.getKeystorepass();
-        String KEYSTORE_MGR_PASS = sharedAppConfigsIF.getKeystoremanagerpass();
-        String[] WELCOME_FILES = (sharedAppConfigsIF.getWelcomefiles().trim()).split("\\s*,\\s*");
-
-        String resourceBase = sharedAppConfigsIF.getResourceDirAbsPath();
-        String webDescriptor = resourceBase + sharedAppConfigsIF.getWebxmlfile();
-        //our localServer for accepting external requests
-        jettyServer = new CustomJettyServer(webDescriptor, resourceBase, contextPath, webAppWarFile, HTTP_PORT, LOGGER);
-
-        //add other httpConfigs
-        //HttpConfiguration httpConfig = jettyServer.addHTTPConfigs(OUTPUT_BUFFER_SIZE, REQUEST_HEADER_SIZE, RESPONSE_HEADER_SIZE, Boolean.TRUE, Boolean.TRUE);
-        jettyServer.addHTTPConfigs(OUTPUT_BUFFER_SIZE, REQUEST_HEADER_SIZE, RESPONSE_HEADER_SIZE, Boolean.TRUE, Boolean.TRUE);
-
-        //connectors        
-        //jettyServer.addHttpsConnector(HTTPS_PORT, KEYSTORE_PATH, KEYSTORE_PASS, KEYSTORE_MGR_PASS);
-        //jettyServer.addAdminConnector(ADMIN_PORT);
-        //Connector httpConnector = jettyServer.addHttpConnector(httpConfig, HTTP_PORT);
-        jettyServer.addHttpConnector(HTTP_PORT);
-
-        //handlers
-        //jettyServer.addResourceHandler(WELCOME_FILES, Boolean.TRUE);
-        //jettyServer.addContextHandler(WELCOME_FILES);
-        //jettyServer.getServletContextHandler(WELCOME_FILES);
-        jettyServer.addWebAppContextHandler();
-
-        //jettyServer.addConnector(httpConnector);
-        //jettyServer.addHandler(webAppContextHandler);
-        return jettyServer;
-    }
-
-    protected boolean startServer() throws Exception {
-        return (jettyServer.startServer());
-    }
-
-    protected boolean stopServer() throws Exception {
-        return (jettyServer.stopServer());
-    }
-
-    protected void scheduleARepeatJob(SharedAppConfigIF sharedAppConfigs, Class<? extends Job> jobClass, JobListener jobListener, HttpClientPool httpClientPool) {
-
-        JobsData jobsData = new JobsData();
-
-        jobsData.setAppConfigs(sharedAppConfigs);
-        jobsData.setHttpClientPool(httpClientPool);
-
-        jobScheduler.scheduleARepeatJob(jobsData, jobClass, jobListener);
-
-    }
-
-    protected boolean pauseAJob(String jobName, String groupName) {
-        return (jobScheduler.pauseAJob(jobName, groupName));
-    }
-
-    protected boolean resumeAJob(String jobName, String groupName) {
-        return (jobScheduler.resumeAJob(jobName, groupName));
-    }
-
-    protected void scheduleAOneTimeJob(String triggerName, String jobName) {
-
-    }
-
-    protected void cancelAllJobs() throws SchedulerException {
-
-        jobScheduler.cancelAllJobs();
-    }
-
-    /**
-     * Method will remove this trigger from the given Job, but other triggers if
-     * any associated if not removed will still fire this job use deleteJob() to
-     * completely remove the entire job with all its associated triggers
-     *
-     * @param triggerName of the trigger to be removed from the job
-     */
-    protected void deleteATrigger(String triggerName) {
-        jobScheduler.deleteATrigger(triggerName);
 
     }
 
