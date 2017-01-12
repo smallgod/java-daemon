@@ -5,14 +5,20 @@ package com.library.masterdaemon;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.library.configs.DatabaseConfig;
+import com.library.configs.HttpClientPoolConfig;
+import com.library.configs.JettyServerConfig;
 import com.library.datamodel.Constants.APIContentType;
 import com.library.httpconnmanager.HttpClientPool;
 import com.library.jettyhttpserver.CustomJettyServer;
 import com.library.scheduler.CustomJobScheduler;
 import com.library.utilities.BindXmlAndPojo;
 import com.library.configs.JobsConfig;
+import com.library.configs.utils.ConfigLoader;
+import com.library.dbadapter.DatabaseAdapter;
 import com.library.sgsharedinterface.SharedAppConfigIF;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -28,7 +34,6 @@ import org.apache.logging.log4j.core.lookup.MapLookup;
 import org.quartz.Job;
 import org.quartz.JobListener;
 import org.quartz.SchedulerException;
-import org.slf4j.Logger;
 
 /**
  *
@@ -40,13 +45,98 @@ public class MasterDaemon implements Daemon, ServletContextListener {
     private CustomJettyServer jettyServer;
     private CustomJobScheduler jobScheduler;
     private HttpClientPool httpClientPool;
+    private DatabaseAdapter databaseAdapter;
     //private SharedAppConfigIF sharedAppConfigs;
+
+    /**
+     *
+     * @param serverConfigs
+     * @throws FileNotFoundException
+     * @throws Exception
+     */
+    public void initServer(JettyServerConfig serverConfigs) throws FileNotFoundException, Exception {
+
+        //JettyServerConfig serverConfigs = configLoader.getJettyServerConfig();
+        jettyServer = new CustomJettyServer(serverConfigs);
+        jettyServer.initialiseServer();
+    }
+
+    public boolean startServer() throws Exception {
+
+        return jettyServer.startServer();
+    }
+
+    public void stopServer() throws Exception {
+        jettyServer.stopServer();
+    }
+
+    /**
+     *
+     * @param databaseConfig
+     * @return
+     */
+    public DatabaseAdapter launchDatabase(DatabaseConfig databaseConfig) {
+
+        //setup DB
+        databaseAdapter = new DatabaseAdapter(httpClientPool, databaseConfig);
+
+        return databaseAdapter;
+    }
+
+    /**
+     *
+     * @param httpClientConfig
+     * @return
+     */
+    public HttpClientPool initHttpClient(HttpClientPoolConfig httpClientConfig) {
+
+        //HttpClientPoolConfig clientPoolConfig = configLoader.getHttpClientPoolConfig();
+        this.httpClientPool = new HttpClientPool(httpClientConfig, APIContentType.JSON);
+
+        return this.httpClientPool;
+    }
+
+    public void releaseHttpResources() throws InterruptedException, IOException {
+        this.httpClientPool.releaseHttpResources();
+    }
+
+    /**
+     *
+     * @param jobsData
+     * @param jobClass
+     * @param jobListener
+     * @param httpClientPool
+     */
+    protected void scheduleARepeatJob(JobsConfig jobsData, Class<? extends Job> jobClass, JobListener jobListener, HttpClientPool httpClientPool) {
+
+        if (jobScheduler == null) {
+            jobScheduler = new CustomJobScheduler(httpClientPool);
+        }
+        jobScheduler.scheduleARepeatJob(jobsData, jobClass, jobListener);
+    }
+
+    protected boolean pauseAJob(String jobName, String groupName) {
+        return (jobScheduler.pauseAJob(jobName, groupName));
+    }
+
+    protected boolean resumeAJob(String jobName, String groupName) {
+        return (jobScheduler.resumeAJob(jobName, groupName));
+    }
+
+    protected void scheduleAOneTimeJob(String triggerName, String jobName) {
+
+    }
+
+    protected void cancelAllJobs() throws SchedulerException {
+
+        jobScheduler.cancelAllJobs();
+    }
 
     //Daemon methods
     @Override
     public void init(DaemonContext context) throws DaemonInitException, Exception {
         daemonContext = context;
-        jobScheduler = new CustomJobScheduler();
+        //jobScheduler = new CustomJobScheduler();
     }
 
     @Override
