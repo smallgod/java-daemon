@@ -75,7 +75,7 @@ public class MasterDaemon implements Daemon, ServletContextListener {
      * @param databaseConfig
      * @return
      */
-    public DatabaseAdapter launchDatabase(DatabaseConfig databaseConfig) {
+    public DatabaseAdapter setUpDatabaseAdapter(DatabaseConfig databaseConfig) {
 
         //setup DB
         databaseAdapter = new DatabaseAdapter(httpClientPool, databaseConfig);
