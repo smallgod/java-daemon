@@ -106,11 +106,12 @@ public class MasterDaemon implements Daemon, ServletContextListener {
      * @param jobClass
      * @param jobListener
      * @param httpClientPool
+     * @param databaseAdapter
      */
-    protected void scheduleARepeatJob(JobsConfig jobsData, Class<? extends Job> jobClass, JobListener jobListener, HttpClientPool httpClientPool) {
+    protected void scheduleARepeatJob(JobsConfig jobsData, Class<? extends Job> jobClass, JobListener jobListener, HttpClientPool httpClientPool, DatabaseAdapter databaseAdapter) {
 
         if (jobScheduler == null) {
-            jobScheduler = new CustomJobScheduler(httpClientPool);
+            jobScheduler = new CustomJobScheduler(httpClientPool, databaseAdapter);
         }
         jobScheduler.scheduleARepeatJob(jobsData, jobClass, jobListener);
     }
