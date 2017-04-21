@@ -14,9 +14,8 @@ import com.library.jettyhttpserver.CustomJettyServer;
 import com.library.scheduler.CustomJobScheduler;
 import com.library.utilities.BindXmlAndPojo;
 import com.library.configs.JobsConfig;
-import com.library.configs.utils.ConfigLoader;
+import com.library.customexception.MyCustomException;
 import com.library.dbadapter.DatabaseAdapter;
-import com.library.sgsharedinterface.SharedAppConfigIF;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -173,7 +172,7 @@ public class MasterDaemon implements Daemon, ServletContextListener {
 //
 //    }
     //custom extra functionality
-    protected <T> Object loadAppProps(String xmlFilePath, String xsdFilePath, Class<T> classToBind) throws FileNotFoundException, UnsupportedEncodingException, SAXException, ValidationException, JAXBException, NullPointerException {
+    protected <T> Object loadAppProps(String xmlFilePath, String xsdFilePath, Class<T> classToBind) throws FileNotFoundException, UnsupportedEncodingException, SAXException, ValidationException, JAXBException, NullPointerException, MyCustomException {
 
         Object appConfigsJaxb = BindXmlAndPojo.xmlFileToObject(xmlFilePath, xsdFilePath, classToBind);
         return appConfigsJaxb;
