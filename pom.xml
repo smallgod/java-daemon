@@ -78,24 +78,21 @@
             <version>1.0</version>
             <type>jar</type>
         </dependency>
+        
         <dependency>
             <groupId>com.sgscheduler</groupId>
             <artifactId>sgscheduler</artifactId>
             <version>1.0</version>
             <type>jar</type>
         </dependency>
+        
         <dependency>
             <groupId>com.sghttpcontrollers</groupId>
             <artifactId>sghttpcontrollers</artifactId>
             <version>1.0</version>
             <type>jar</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.mchange</groupId>
-                    <artifactId>c3p0</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
+        
         <dependency>
             <groupId>commons-daemon</groupId>
             <artifactId>commons-daemon</artifactId>

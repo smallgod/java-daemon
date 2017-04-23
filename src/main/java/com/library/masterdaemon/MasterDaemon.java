@@ -16,6 +16,7 @@ import com.library.utilities.BindXmlAndPojo;
 import com.library.configs.JobsConfig;
 import com.library.customexception.MyCustomException;
 import com.library.dbadapter.DatabaseAdapter;
+import com.library.sglogger.util.LoggerUtil;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -26,7 +27,7 @@ import javax.xml.bind.ValidationException;
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
 import org.apache.commons.daemon.DaemonInitException;
-import org.apache.log4j.xml.DOMConfigurator;
+//import org.apache.log4j.xml.DOMConfigurator;
 import org.xml.sax.SAXException;
 //import org.apache.logging.log4j.core.lookup.MainMapLookup;
 import org.apache.logging.log4j.core.lookup.MapLookup;
@@ -188,14 +189,41 @@ public class MasterDaemon implements Daemon, ServletContextListener {
      * @throws java.lang.Exception
      */
     protected void loadLog4JProps(String log4jFile, String... paramsToPass) throws Exception {
+        //protected void loadLog4JProps(String log4jFile, String... paramsToPass) throws Exception {
 
         //Properties props = new Properties();
         //props.put("logsFolder", paramsToPass);
         //DOMConfigurator.setParameter(elem, propSetter, props);
-        DOMConfigurator.configure(log4jFile); //XML configurator
-        MapLookup.setMainArguments(paramsToPass);
+        ///////////
+        //DOMConfigurator.configure(log4jFile); //XML configurator
+        //MapLookup.setMainArguments(paramsToPass);
+        ///////////
         //PropertyConfigurator.configure(log4jPropsFileLoc);//Property file configurator
+        
+        
+    }
+    
+    /**
+     * 
+     * @param log4jFile
+     * @param logDir
+     * @throws Exception 
+     */
+    protected void loadLog4JProps(String log4jFile, String logDir) throws Exception {
+        //protected void loadLog4JProps(String log4jFile, String... paramsToPass) throws Exception {
 
+        //Properties props = new Properties();
+        //props.put("logsFolder", paramsToPass);
+        //DOMConfigurator.setParameter(elem, propSetter, props);
+        ///////////
+        //DOMConfigurator.configure(log4jFile); //XML configurator
+        //MapLookup.setMainArguments(paramsToPass);
+        ///////////
+        //PropertyConfigurator.configure(log4jPropsFileLoc);//Property file configurator
+        
+        
+        LoggerUtil.configureLog4J(log4jFile, logDir);
+        
     }
 
     protected void loadHibernateProps() {
