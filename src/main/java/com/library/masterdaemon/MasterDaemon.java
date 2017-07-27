@@ -115,6 +115,43 @@ public class MasterDaemon implements Daemon, ServletContextListener {
         }
         jobScheduler.scheduleARepeatJob(jobsData, jobClass, jobListener);
     }
+    
+    
+    /**
+     * Schedule a repeat job
+     * 
+     * @param jobsData
+     * @param jobClass
+     * @param jobListener
+     * @param httpClientPool 
+     */
+    protected void scheduleARepeatJob(JobsConfig jobsData, Class<? extends Job> jobClass, JobListener jobListener, HttpClientPool httpClientPool ) {
+
+        if (jobScheduler == null) {
+            jobScheduler = new CustomJobScheduler(httpClientPool);
+        }
+        jobScheduler.scheduleARepeatJob(jobsData, jobClass, jobListener);
+    }
+    
+    
+    
+        /**
+     * Schedule a repeat job
+     * 
+     * @param thisJobsData
+     * @param secondJobsData
+     * @param jobClass
+     * @param jobListener
+     * @param httpClientPool 
+     */
+    protected void scheduleARepeatJob(JobsConfig thisJobsData, JobsConfig secondJobsData, Class<? extends Job> jobClass, JobListener jobListener, HttpClientPool httpClientPool ) {
+
+        if (jobScheduler == null) {
+            jobScheduler = new CustomJobScheduler(httpClientPool);
+        }
+        jobScheduler.scheduleARepeatJob(thisJobsData, secondJobsData, jobClass, jobListener);
+    }
+    
 
     protected boolean pauseAJob(String jobName, String groupName) {
         return (jobScheduler.pauseAJob(jobName, groupName));
