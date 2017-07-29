@@ -16,6 +16,7 @@ import com.library.utilities.BindXmlAndPojo;
 import com.library.configs.JobsConfig;
 import com.library.customexception.MyCustomException;
 import com.library.dbadapter.DatabaseAdapter;
+import com.library.hibernate.CustomHibernate;
 import com.library.sglogger.util.LoggerUtil;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -115,43 +116,40 @@ public class MasterDaemon implements Daemon, ServletContextListener {
         }
         jobScheduler.scheduleARepeatJob(jobsData, jobClass, jobListener);
     }
-    
-    
+
     /**
      * Schedule a repeat job
-     * 
+     *
      * @param jobsData
      * @param jobClass
      * @param jobListener
-     * @param httpClientPool 
+     * @param httpClientPool
      */
-    protected void scheduleARepeatJob(JobsConfig jobsData, Class<? extends Job> jobClass, JobListener jobListener, HttpClientPool httpClientPool ) {
+    protected void scheduleARepeatJob(JobsConfig jobsData, Class<? extends Job> jobClass, JobListener jobListener, HttpClientPool httpClientPool) {
 
         if (jobScheduler == null) {
             jobScheduler = new CustomJobScheduler(httpClientPool);
         }
         jobScheduler.scheduleARepeatJob(jobsData, jobClass, jobListener);
     }
-    
-    
-    
-        /**
+
+    /**
      * Schedule a repeat job
-     * 
+     *
      * @param thisJobsData
      * @param secondJobsData
      * @param jobClass
      * @param jobListener
-     * @param httpClientPool 
+     * @param httpClientPool
+     * @param databaseAdapter
      */
-    protected void scheduleARepeatJob(JobsConfig thisJobsData, JobsConfig secondJobsData, Class<? extends Job> jobClass, JobListener jobListener, HttpClientPool httpClientPool ) {
+    protected void scheduleARepeatJob(JobsConfig thisJobsData, JobsConfig secondJobsData, Class<? extends Job> jobClass, JobListener jobListener, HttpClientPool httpClientPool, DatabaseAdapter databaseAdapter) {
 
         if (jobScheduler == null) {
             jobScheduler = new CustomJobScheduler(httpClientPool);
         }
         jobScheduler.scheduleARepeatJob(thisJobsData, secondJobsData, jobClass, jobListener);
     }
-    
 
     protected boolean pauseAJob(String jobName, String groupName) {
         return (jobScheduler.pauseAJob(jobName, groupName));
@@ -236,15 +234,13 @@ public class MasterDaemon implements Daemon, ServletContextListener {
         //MapLookup.setMainArguments(paramsToPass);
         ///////////
         //PropertyConfigurator.configure(log4jPropsFileLoc);//Property file configurator
-        
-        
     }
-    
+
     /**
-     * 
+     *
      * @param log4jFile
      * @param logDir
-     * @throws Exception 
+     * @throws Exception
      */
     protected void loadLog4JProps(String log4jFile, String logDir) throws Exception {
         //protected void loadLog4JProps(String log4jFile, String... paramsToPass) throws Exception {
@@ -257,10 +253,8 @@ public class MasterDaemon implements Daemon, ServletContextListener {
         //MapLookup.setMainArguments(paramsToPass);
         ///////////
         //PropertyConfigurator.configure(log4jPropsFileLoc);//Property file configurator
-        
-        
         LoggerUtil.configureLog4J(log4jFile, logDir);
-        
+
     }
 
     protected void loadHibernateProps() {
