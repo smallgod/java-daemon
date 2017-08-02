@@ -18,6 +18,7 @@ import com.library.customexception.MyCustomException;
 import com.library.dbadapter.DatabaseAdapter;
 import com.library.hibernate.CustomHibernate;
 import com.library.sglogger.util.LoggerUtil;
+import com.library.sgsharedinterface.SharedAppConfigIF;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -44,9 +45,10 @@ public class MasterDaemon implements Daemon, ServletContextListener {
 
     private DaemonContext daemonContext;
     private CustomJettyServer jettyServer;
-    private CustomJobScheduler jobScheduler;
-    private HttpClientPool httpClientPool;
-    private DatabaseAdapter databaseAdapter;
+//    private CustomJobScheduler jobScheduler;
+//    private HttpClientPool httpClientPool;
+//    private DatabaseAdapter databaseAdapter;
+//    private CustomHibernate internalDbAccess;
     //private SharedAppConfigIF sharedAppConfigs;
 
     /**
@@ -71,102 +73,86 @@ public class MasterDaemon implements Daemon, ServletContextListener {
         jettyServer.stopServer();
     }
 
-    /**
-     *
-     * @param databaseConfig
-     * @return
-     */
-    public DatabaseAdapter setUpDatabaseAdapter(DatabaseConfig databaseConfig) {
+//    /**
+//     *
+//     * @param databaseConfig
+//     * @return
+//     */
+//    public DatabaseAdapter setUpDatabaseAdapter(DatabaseConfig databaseConfig) {
+//
+//        //setup DB
+//        databaseAdapter = new DatabaseAdapter(httpClientPool, databaseConfig);
+//
+//        return databaseAdapter;
+//    }
 
-        //setup DB
-        databaseAdapter = new DatabaseAdapter(httpClientPool, databaseConfig);
+//    /**
+//     *
+//     * @param httpClientConfig
+//     * @return
+//     */
+//    public HttpClientPool initHttpClient(HttpClientPoolConfig httpClientConfig) {
+//
+//        //HttpClientPoolConfig clientPoolConfig = configLoader.getHttpClientPoolConfig();
+//        this.httpClientPool = new HttpClientPool(httpClientConfig, APIContentType.JSON);
+//
+//        return this.httpClientPool;
+//    }
 
-        return databaseAdapter;
-    }
+//    public void releaseHttpResources() throws InterruptedException, IOException {
+//        this.httpClientPool.releaseHttpResources();
+//    }
 
-    /**
-     *
-     * @param httpClientConfig
-     * @return
-     */
-    public HttpClientPool initHttpClient(HttpClientPoolConfig httpClientConfig) {
+//    /**
+//     *
+//     * @param jobsData
+//     * @param jobClass
+//     * @param jobListener
+//     * @param httpClientPool
+//     * @param databaseAdapter
+//     */
+//    protected void scheduleARepeatJob(JobsConfig jobsData, Class<? extends Job> jobClass, JobListener jobListener, HttpClientPool httpClientPool, CustomHibernate internalDbAccess, DatabaseAdapter databaseAdapter) {
+//
+//        if (jobScheduler == null) {
+//            jobScheduler = new CustomJobScheduler(httpClientPool, internalDbAccess, databaseAdapter);
+//        }
+//        jobScheduler.scheduleARepeatJob(jobsData, jobClass, jobListener);
+//    }
 
-        //HttpClientPoolConfig clientPoolConfig = configLoader.getHttpClientPoolConfig();
-        this.httpClientPool = new HttpClientPool(httpClientConfig, APIContentType.JSON);
+//    /**
+//     * Schedule a repeat job
+//     *
+//     * @param thisJobsData
+//     * @param secondJobsData
+//     * @param jobClass
+//     * @param jobListener
+//     * @param httpClientPool
+//     * @param databaseAdapter
+//     */
+//    protected void scheduleARepeatJob(JobsConfig thisJobsData, JobsConfig secondJobsData, Class<? extends Job> jobClass, JobListener jobListener, HttpClientPool httpClientPool, CustomHibernate internalDbAccess, DatabaseAdapter databaseAdapter) {
+//
+//        if (jobScheduler == null) {
+//            jobScheduler = new CustomJobScheduler(httpClientPool, internalDbAccess, databaseAdapter);
+//        }
+//        jobScheduler.scheduleARepeatJob(thisJobsData, secondJobsData, jobClass, jobListener);
+//    }
 
-        return this.httpClientPool;
-    }
-
-    public void releaseHttpResources() throws InterruptedException, IOException {
-        this.httpClientPool.releaseHttpResources();
-    }
-
-    /**
-     *
-     * @param jobsData
-     * @param jobClass
-     * @param jobListener
-     * @param httpClientPool
-     * @param databaseAdapter
-     */
-    protected void scheduleARepeatJob(JobsConfig jobsData, Class<? extends Job> jobClass, JobListener jobListener, HttpClientPool httpClientPool, DatabaseAdapter databaseAdapter) {
-
-        if (jobScheduler == null) {
-            jobScheduler = new CustomJobScheduler(httpClientPool, databaseAdapter);
-        }
-        jobScheduler.scheduleARepeatJob(jobsData, jobClass, jobListener);
-    }
-
-    /**
-     * Schedule a repeat job
-     *
-     * @param jobsData
-     * @param jobClass
-     * @param jobListener
-     * @param httpClientPool
-     */
-    protected void scheduleARepeatJob(JobsConfig jobsData, Class<? extends Job> jobClass, JobListener jobListener, HttpClientPool httpClientPool) {
-
-        if (jobScheduler == null) {
-            jobScheduler = new CustomJobScheduler(httpClientPool);
-        }
-        jobScheduler.scheduleARepeatJob(jobsData, jobClass, jobListener);
-    }
-
-    /**
-     * Schedule a repeat job
-     *
-     * @param thisJobsData
-     * @param secondJobsData
-     * @param jobClass
-     * @param jobListener
-     * @param httpClientPool
-     * @param databaseAdapter
-     */
-    protected void scheduleARepeatJob(JobsConfig thisJobsData, JobsConfig secondJobsData, Class<? extends Job> jobClass, JobListener jobListener, HttpClientPool httpClientPool, DatabaseAdapter databaseAdapter) {
-
-        if (jobScheduler == null) {
-            jobScheduler = new CustomJobScheduler(httpClientPool);
-        }
-        jobScheduler.scheduleARepeatJob(thisJobsData, secondJobsData, jobClass, jobListener);
-    }
-
-    protected boolean pauseAJob(String jobName, String groupName) {
-        return (jobScheduler.pauseAJob(jobName, groupName));
-    }
-
-    protected boolean resumeAJob(String jobName, String groupName) {
-        return (jobScheduler.resumeAJob(jobName, groupName));
-    }
-
-    protected void scheduleAOneTimeJob(String triggerName, String jobName) {
-
-    }
-
-    protected void cancelAllJobs() throws SchedulerException {
-
-        jobScheduler.cancelAllJobs();
-    }
+//    protected boolean pauseAJob(String jobName, String groupName) {
+//        return (jobScheduler.pauseAJob(jobName, groupName));
+//    }
+//
+//    protected boolean resumeAJob(String jobName, String groupName) {
+//        return (jobScheduler.resumeAJob(jobName, groupName));
+//    }
+//
+//    protected void scheduleAOneTimeJob(String triggerName, String jobName) {
+//
+//    }
+//
+//    protected void cancelAllJobs() throws SchedulerException {
+//
+//        jobScheduler.cancelAllJobs();
+//    }
 
     //Daemon methods
     @Override
@@ -257,9 +243,9 @@ public class MasterDaemon implements Daemon, ServletContextListener {
 
     }
 
-    protected void loadHibernateProps() {
-
-    }
+//    protected void loadHibernateProps() {
+//
+//    }
 
     protected String[] loadCmdLineArgs() throws NullPointerException {
 
