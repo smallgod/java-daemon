@@ -5,22 +5,12 @@ package com.library.masterdaemon;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import com.library.configs.DatabaseConfig;
-import com.library.configs.HttpClientPoolConfig;
 import com.library.configs.JettyServerConfig;
-import com.library.datamodel.Constants.APIContentType;
-import com.library.httpconnmanager.HttpClientPool;
 import com.library.jettyhttpserver.CustomJettyServer;
-import com.library.scheduler.CustomJobScheduler;
 import com.library.utilities.BindXmlAndPojo;
-import com.library.configs.JobsConfig;
 import com.library.customexception.MyCustomException;
-import com.library.dbadapter.DatabaseAdapter;
-import com.library.hibernate.CustomHibernate;
 import com.library.sglogger.util.LoggerUtil;
-import com.library.sgsharedinterface.SharedAppConfigIF;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -32,10 +22,6 @@ import org.apache.commons.daemon.DaemonInitException;
 //import org.apache.log4j.xml.DOMConfigurator;
 import org.xml.sax.SAXException;
 //import org.apache.logging.log4j.core.lookup.MainMapLookup;
-import org.apache.logging.log4j.core.lookup.MapLookup;
-import org.quartz.Job;
-import org.quartz.JobListener;
-import org.quartz.SchedulerException;
 
 /**
  *

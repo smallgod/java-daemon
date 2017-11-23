@@ -60,13 +60,6 @@
     <dependencies>
         
         <dependency>
-            <groupId>com.sghttpconnectionmanager</groupId>
-            <artifactId>sghttpconnectionmanager</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-        </dependency>
-        
-        <dependency>
             <groupId>com.sgsharedinterfce</groupId>
             <artifactId>sgsharedinterface</artifactId>
             <version>1.0</version>
@@ -78,48 +71,7 @@
             <version>1.0</version>
             <type>jar</type>
         </dependency>
-        
-        <dependency>
-            <groupId>com.sgscheduler</groupId>
-            <artifactId>sgscheduler</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.sghttpcontrollers</groupId>
-            <artifactId>sghttpcontrollers</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-        </dependency>
-        
-        <dependency>
-            <groupId>commons-daemon</groupId>
-            <artifactId>commons-daemon</artifactId>
-            <version>1.0.15</version>
-            <type>jar</type>
-        </dependency>
 
-        
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz-jobs</artifactId>
-            <version>2.2.1</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-            <version>2.2.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>c3p0</groupId>
-                    <artifactId>c3p0</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        
     </dependencies>
     
 </project>
